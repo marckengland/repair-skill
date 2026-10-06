@@ -38,11 +38,12 @@ one-liner they take a minute, and they are the phases that stop the chain.
 
 1. Record where you start: `git rev-parse HEAD` and `git status`. If the tree is
    dirty with unrelated work, note which files so you don't mix changes.
-2. Find how the project verifies itself. Look, in order, at: `CLAUDE.md`,
+2. Find how the project verifies itself. Look, in order, at: a
+   `## Verification` section in `CLAUDE.md`, `.claude/repair-verify.sh`,
    `README`, CI config (`.github/workflows/`, `.gitlab-ci.yml`, etc.),
    `package.json` scripts, `Makefile`, `pyproject.toml`/`tox.ini`,
    `Cargo.toml`, `go.mod`. Collect the **test, typecheck, lint and build**
-   commands.
+   commands, and any listed known pre-existing failures.
 3. Run them and save the results (pass/fail counts and the **names** of failing
    tests/errors) to a scratch file. These are **pre-existing failures**: not
    yours, and not to be confused with regressions later.
@@ -202,6 +203,22 @@ Re-read `git diff` adversarially before declaring done:
 Then report using [templates/repair-report.md](templates/repair-report.md).
 Be plain about what was **not** verified: a slow suite you only partly ran, an
 environment you couldn't reproduce, a consumer you couldn't test.
+
+If Phase 0 had to dig for the verification commands (no `## Verification`
+section in `CLAUDE.md`), offer to add one using
+[templates/claude-md-verification.md](templates/claude-md-verification.md), so
+the next baseline is quick and reliable.
+
+### Related tools
+
+- **`regression-check` skill:** the Phase 0 + Phase 6 comparison on its own,
+  for any change (features, refactors, upgrades), not just bug fixes.
+- **Stop hook** (installed with the plugin): if the project has
+  `.claude/repair-verify.sh` (example in
+  [templates/repair-verify.sh](templates/repair-verify.sh)), it runs before
+  Claude finishes a turn that changed files and sends failures back. When it
+  reports a failure, apply the Phase 6 table to it: regression or
+  pre-existing.
 
 ---
 

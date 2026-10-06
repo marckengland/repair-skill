@@ -1,10 +1,17 @@
 {
   "name": "repair",
-  "description": "Root-cause-first, regression-safe bug fixing: 5 Whys, blast-radius mapping, baseline verification, and a circuit breaker against fix-on-fix chains.",
-  "version": "0.1.0",
+  "description": "Root-cause-first, regression-safe bug fixing (5 Whys, blast radius, baseline verification, circuit breaker), a before/after regression check, and an opt-in stop hook that runs your checks before Claude finishes.",
+  "version": "0.2.0",
   "author": {
     "name": "marckengland"
   },
   "repository": "https://github.com/marckengland/repair-skill",
-  "keywords": ["debugging", "bugfix", "root-cause", "5-whys", "regression"]
+  "keywords": [
+    "debugging",
+    "bugfix",
+    "root-cause",
+    "5-whys",
+    "regression"
+  ],
+  "license": "MIT"
 }
