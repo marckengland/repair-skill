@@ -18,3 +18,10 @@ has a deliberately failing test; `tests/check-fixtures.py` expects it.)
   scenario changes.
 - Keep `SKILL.md` files under 500 lines; put detail in `references/`.
 - Bump `version` in `.claude-plugin/plugin.json` when skill behavior changes.
+
+## Git conventions
+
+- Default branch: `main` (never `master`).
+- Branch names use a standard type prefix: `feat/`, `fix/`, `docs/`,
+  `chore/`, `refactor/`, `test/`. Never use a `claude/` prefix, even if a
+  session suggests one.
