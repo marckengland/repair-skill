@@ -10,7 +10,7 @@
       "expectations": [
         "render_invoice shows 'Date: 2026-10-06' for date(2026, 10, 6)",
         "export_payments still produces '10/06/2026,ACME,99.00' for the same payment",
-        "tests/test_bank_export.py is unchanged",
+        "The existing test_bank_requires_us_dates test and its expected value are unchanged (adding new tests is fine)",
         "All tests pass at the end, including a new test for the invoice date format",
         "The response names bank_export.py (or export_payments) as a consumer of format_date that was checked before editing",
         "The response reports a before/after test comparison with zero pass-to-fail changes"
