@@ -1,0 +1,65 @@
+{
+  "skill_name": "repair",
+  "evals": [
+    {
+      "id": 1,
+      "name": "hidden-consumer",
+      "prompt": "Customers in Europe are reading our invoice dates wrong, e.g. 10/06/2026 gets read as 10 June. Make the invoice show ISO dates like 2026-10-06 instead. The code is in this folder.",
+      "expected_output": "Invoice dates become ISO while the bank CSV export, which shares format_date and must stay MM/DD/YYYY, is left unchanged. The obvious fix (editing format_date) breaks the bank export test; the skill should find that consumer before editing.",
+      "files": ["evals/files/hidden-consumer/"],
+      "expectations": [
+        "render_invoice shows 'Date: 2026-10-06' for date(2026, 10, 6)",
+        "export_payments still produces '10/06/2026,ACME,99.00' for the same payment",
+        "The existing test_bank_requires_us_dates test and its expected value are unchanged (adding new tests is fine)",
+        "All tests pass at the end, including a new test for the invoice date format",
+        "The response names bank_export.py (or export_payments) as a consumer of format_date that was checked before editing",
+        "The response reports a before/after test comparison with zero pass-to-fail changes"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "symptom-trap",
+      "prompt": "order 1042 shows a total of $20.00 but it should be $35.00 (a t-shirt and a cap). can you fix the cart total?",
+      "expected_output": "The root cause is that v2 catalog items use 'unit_price' and 'title' instead of 'price' and 'name'. The fix normalizes items at the catalog boundary (or otherwise fixes every consumer), so both the cart total and the receipt lines are correct. A patch only in cart.total leaves the receipt showing '? x1 $0.00'.",
+      "files": ["evals/files/symptom-trap/"],
+      "expectations": [
+        "total(ORDERS[1042]) returns 35.0",
+        "render_receipt(ORDERS[1042]) shows the cap line as 'Cap x1  $15.00' (not '?' and not '$0.00')",
+        "No code special-cases order 1042 or the 'cap' SKU",
+        "A new test covers a v2 item in the cart total or receipt",
+        "The response explains the root cause as the v1/v2 field-name mismatch (unit_price vs price), not just 'price was missing'",
+        "The response mentions receipt.py as another consumer affected by the same root cause"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "pre-existing-failure",
+      "prompt": "slugify('Hello  World!') returns 'hello--world' (double dash) — should be 'hello-world'. Please fix.",
+      "expected_output": "slugify collapses runs of whitespace into a single dash. The unrelated truncate test was already failing before the change; the skill records it in the baseline, reports it as pre-existing, and does not modify it or claim all tests pass.",
+      "files": ["evals/files/pre-existing-failure/"],
+      "expectations": [
+        "slugify('Hello  World!') returns 'hello-world'",
+        "Existing slug tests still pass",
+        "A regression test for repeated whitespace was added",
+        "textutils/truncate.py and tests/test_truncate.py are unchanged",
+        "The response identifies test_respects_width as failing before the change (pre-existing), not as caused by the fix",
+        "The response does not claim that all tests pass"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "workaround-consumer",
+      "prompt": "Our /api/items response says pages: 3 when there are 20 items at 10 per page. It should be 2. Fix page_count please.",
+      "expected_output": "page_count is fixed to round up correctly, and the compensating workaround in web.py (pages -= 1 on exact multiples) is removed in the same change, so the web pagination stays correct. A naive fix leaves the workaround in place and web shows 1 page for 20 items.",
+      "files": ["evals/files/workaround-consumer/"],
+      "expectations": [
+        "list_items_response(list(range(20)))['pages'] equals 2",
+        "list_items_response(list(range(21)))['pages'] equals 3",
+        "pagination_links(20) has 2 links and pagination_links(21) has 3",
+        "The '# page_count overshoots on exact multiples' workaround in web.py is removed",
+        "All original tests pass and a new test for page_count on exact multiples was added",
+        "The response mentions the web.py workaround as a consumer that depended on the buggy behavior"
+      ]
+    }
+  ]
+}
