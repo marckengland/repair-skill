@@ -1,0 +1,13 @@
+{
+  "name": "repair-skill",
+  "owner": {
+    "name": "marckengland"
+  },
+  "plugins": [
+    {
+      "name": "repair",
+      "source": "./",
+      "description": "Root-cause-first, regression-safe bug fixing that stops fix-on-fix chains."
+    }
+  ]
+}
